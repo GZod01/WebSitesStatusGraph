@@ -119,14 +119,16 @@
         var network = new vis.Network(container, data, options);
 
         const REFRESH_INTERVAL_MS = 120000; // 2 minutes
+        let lastFetchTime = null;
 
         function refreshStatuses() {
           fetch(uptime_summary_url)
             .then(r => r.json())
             .then(summary => {
+              lastFetchTime = new Date();
               const bySlug = {};
               for (const s of summary) {
-                if (s && s.slug) bySlug[s.slug] = s.status; // 'up' | 'down'
+                if (s && s.slug) bySlug[s.slug] = s; // store full uptime data
               }
 
               const updates = [];
@@ -140,10 +142,14 @@
                 if (!slug) return;
 
                 // use fetched status if available, otherwise keep current status or default to 'unknown'
-                const newStatus = bySlug[slug] || (n.fullDatas && n.fullDatas.status) || 'unknown';
+                const uptimeData = bySlug[slug];
+                const newStatus = uptimeData ? uptimeData.status : (n.fullDatas && n.fullDatas.status) || 'unknown';
 
-                // update full data status
-                if (n.fullDatas) n.fullDatas.status = newStatus;
+                // update full data status and store uptime data
+                if (n.fullDatas) {
+                  n.fullDatas.status = newStatus;
+                  n.fullDatas.uptimeData = uptimeData || null;
+                }
 
                 // update title content
                 if (n.title && n.fullDatas) {
@@ -172,12 +178,44 @@ n.title=a;
         network.on("click", function (params) {
             if (params.nodes.length > 0) {
                 var nodeId = params.nodes[0];
-                var nodeData = nodes.get(nodeId).fullDatas;
+                var node = nodes.get(nodeId);
+                var nodeData = node.fullDatas;
                 var infoContainer = document.getElementById('mynodeinfo');
-                infoContainer.innerHTML = '<h2>' + nodeData.label + '</h2>' +
+                
+                // Build the info panel HTML
+                var html = '<h2>' + nodeData.label + '</h2>' +
                     '<p><strong>Description:</strong> ' + nodeData.description + '</p>' +
                     '<p><strong>Status:</strong> <a href="' + nodeData.status_url + '"><u>' + nodeData.status + '</u></a></p>' +
                     '<p><strong>Homepage:</strong> <a href="' + nodeData.homepage + '"><u>' + nodeData.homepage + '</u></a></p>';
+                
+                // Add debug information section
+                html += '<hr style="margin: 15px 0;">';
+                html += '<h3 style="margin-bottom: 10px; font-size: 1.1em;">Debug Information</h3>';
+                html += '<div style="font-family: monospace; font-size: 0.9em; background: #f5f5f5; padding: 10px; border-radius: 5px;">';
+                html += '<p style="margin: 5px 0;"><strong>Node ID:</strong> ' + nodeData.id + '</p>';
+                html += '<p style="margin: 5px 0;"><strong>Status ID:</strong> ' + (node.status_id || 'N/A') + '</p>';
+                html += '<p style="margin: 5px 0;"><strong>Current Color:</strong> ' + (node.color || 'N/A') + '</p>';
+                
+                // Add uptime data if available
+                if (nodeData.uptimeData) {
+                    var uptimeData = nodeData.uptimeData;
+                    html += '<p style="margin: 5px 0;"><strong>Uptime (All time):</strong> ' + (uptimeData.uptime || 'N/A') + '</p>';
+                    html += '<p style="margin: 5px 0;"><strong>Uptime (Day):</strong> ' + (uptimeData.uptimeDay || 'N/A') + '</p>';
+                    html += '<p style="margin: 5px 0;"><strong>Uptime (Week):</strong> ' + (uptimeData.uptimeWeek || 'N/A') + '</p>';
+                    html += '<p style="margin: 5px 0;"><strong>Uptime (Month):</strong> ' + (uptimeData.uptimeMonth || 'N/A') + '</p>';
+                    html += '<p style="margin: 5px 0;"><strong>Response Time:</strong> ' + (uptimeData.time ? uptimeData.time + ' ms' : 'N/A') + '</p>';
+                } else {
+                    html += '<p style="margin: 5px 0; color: #999;">Uptime data not yet loaded</p>';
+                }
+                
+                // Add last fetch time
+                if (lastFetchTime) {
+                    html += '<p style="margin: 5px 0;"><strong>Last Updated:</strong> ' + lastFetchTime.toLocaleTimeString() + '</p>';
+                }
+                
+                html += '</div>';
+                
+                infoContainer.innerHTML = html;
                 console.log("Clicked node data:", nodeData);
                 if (nodeData.iscontainer) {
                     let updates = [];
