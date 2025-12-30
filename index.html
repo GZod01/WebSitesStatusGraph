@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self' 'unsafe-inline'; script-src-elem 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';">
+    <title>WOW</title>
+    <script type="text/javascript" src="./vis-network.min.js"></script>
+    <style type="text/css">
+        #mynetwork {
+            height: calc(100vh - 2px);
+            width:calc(100vw - 2px);
+            border: 1px solid lightgray;
+        }
+
+        #mynodeinfo {
+            height: calc(80vh - 2px);
+            width: 20vw;
+            position:fixed;
+            top : 10vh;
+            right: 10px;
+            padding: 10px;
+            border-radius: 20px;;
+            border: 1px solid lightgray;
+        }
+
+        body {
+            margin: 0;
+            height: 100vh;
+            width: 100vw;
+            padding: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="mynetwork"></div>
+
+    <div id="mynodeinfo"></div>
+
+    <script type="text/javascript">
+        const uptime_summary_url = "https://raw.githubusercontent.com/GZod01/gzod01-server-uptime/master/history/summary.json";
+        // create an array with nodes
+        var nodesDatasFull = [
+            { id: 120, label: 'CyberGammaGroup Websites VM', containerOpened: false, iscontainer: true, description: "The main VM for standards CyberGammaGroup websites.", status: "on", status_url: "https://uptime.gh.gzod01.fr/history/cybergammagroup-websites-vm", homepage: "https://cybergamma.group/server_status" },
+            { id: 100, label: 'Sezille.net Main Server', containerOpened: false, iscontainer: true, description: "This is the main server hosting all primary services.", status: "on", status_url: "https://uptime.gh.gzod01.fr/history/sezille-net", homepage: "https://sezille.net/server_status" },
+            { id: 121, label: 'CyberGammaGroup', description: "The official website of CyberGammaGroup.", status: "on", status_url: "https://uptime.gh.gzod01.fr/history/cybergamma-group", homepage: "https://cybergamma.group" },
+            { id: 123, label: 'CyberGammApps', description: "The main site of CyberGammaGroup web applications", status: "on", status_url: "https://uptime.gh.gzod01.fr/history/cybergamma-store", homepage: "https://apps.cybergamma.group" },
+            { id: 130, label: 'CyberGammaForge VM', containerOpened: false, iscontainer: true, description: "The VM hosting the CyberGammaForge service.", status: "on", status_url: "https://uptime.gh.gzod01.fr/history/cybergammaforge-vm", homepage: "https://forge.cybergamma.group/server_status" },
+            { id: 131, label: 'CyberGammaForge', description: "The official CyberGammaForge service for hosting open source projects.", status: "on", status_url: "https://uptime.gh.gzod01.fr/history/cybergammaforge", homepage: "https://forge.cybergamma.group" },
+            { id: 140, label: 'CyberGammaGroup Communications VM', containerOpened: false, iscontainer: true, description: "The VM dedicated to CyberGammaGroup communication services.", status: "on", status_url: "https://uptime.gh.gzod01.fr/history/cybergammagroup-communications-vm", homepage: "https://communications.cybergamma.group/server_status" },
+            { id: 141, label: 'CyberGammaMail', description: "The official email service for CyberGammaGroup.", status: "on", status_url: "https://uptime.gh.gzod01.fr/history/cybergammamail", homepage: "https://mail.cybergamma.group" },
+            { id: 142, label: 'CyberGammaChat', description: "The official chat service for CyberGammaGroup.", status: "on", status_url: "https://uptime.gh.gzod01.fr/history/cybergammachat", homepage: "https://ess.cybergamma.group" },
+            { id: 150, label: 'CyberGammaGroup Services VM', containerOpened: false, iscontainer: true, description: "The VM for various CyberGammaGroup services.", status: "on", status_url: "https://uptime.gh.gzod01.fr/history/cybergammagroup-services-vm", homepage: "https://services.cybergamma.group/server_status" },
+            { id: 151, label: 'CyberGammaCloud', description: "The CyberGammaGroup nextcloud instance.", status: "on", status_url: "https://uptime.gh.gzod01.fr/history/cybergammacloud", homepage: "https://nc.cybergamma.group" },
+            { id: 160, label: 'Home Assistant Sezille.net VM', iscontainer: true, description: "The VM dedicated to home automation services for Sezille.net.", status: "on", status_url: "https://uptime.gh.gzod01.fr/history/home-assistant-sezille-net-vm", homepage: "https://haos.sezille.net/server_status" },
+            { id: 161, label: 'Home Assistant Sezille.net', description: "The home automation platform for Sezille.net.", status: "on", status_url: "https://uptime.gh.gzod01.fr/history/home-assistant-sezille-net", homepage: "https://haos.sezille.net" }
+        ];
+        nodesDatas = [];
+        let maxI = 0;
+        nodesDatasFull.forEach(function (nodeData) {
+            let nodeDataCopy = {};
+            nodeDataCopy.id = nodeData.id;
+            nodeDataCopy.label = nodeData.label;
+            let a = document.createElement('div');
+            nodeDataCopy.title = a;
+            a.innerHTML = 'Server: <b>' + nodeData.label + '</b><br>Description: <i>' + nodeData.description + '</i><br>Status: <a href=' + nodeData.status_url + '><u>' + nodeData.status + '</u></a><br>Homepage: <a href=' + nodeData.homepage + '><u>' + nodeData.homepage + '</u></a>';
+            nodeDataCopy.shape = nodeData.iscontainer ? 'box' : 'ellipse';
+            nodeDataCopy.color = nodeData.status === 'on' ? 'lightgreen' : 'lightcoral';
+            nodeDataCopy.fullDatas = nodeData;
+            if (nodeData.iscontainer) nodeDataCopy.containerOpened = nodeData.containerOpened ?? false;
+            if (nodeData.id != nodesDatasFull[0].id) {
+                nodeDataCopy.hidden = true;
+            }
+            let i=0;
+            while(true){
+                i++;
+                if((nodeData.id%Math.pow(10,i))!=0)break;
+            }
+            maxI = Math.max(maxI,i);
+            nodeDataCopy.level = i;
+            nodesDatas.push(nodeDataCopy);
+        });
+        var nodes = new vis.DataSet(nodesDatas);
+
+        // create an array with edges
+        var edges = new vis.DataSet([
+            { from: 100, to: 120 },
+            { from: 100, to: 130 },
+            { from: 100, to: 140 },
+            { from: 100, to: 150 },
+            { from: 100, to: 160 },
+            { from: 120, to: 121 },
+            { from: 120, to: 123 },
+            { from: 130, to: 131 },
+            { from: 140, to: 141 },
+            { from: 140, to: 142 },
+            { from: 150, to: 151 },
+            { from: 160, to: 161 }
+        ]);
+
+        // create a network
+        var container = document.getElementById('mynetwork');
+
+        // provide the data in the vis format
+        var data = {
+            nodes: nodes,
+            edges: edges
+        };
+        var options = {
+        };
+
+        // initialize your network!
+        var network = new vis.Network(container, data, options);
+        network.on("click", function (params) {
+            if (params.nodes.length > 0) {
+                var nodeId = params.nodes[0];
+                var nodeData = nodes.get(nodeId).fullDatas;
+                var infoContainer = document.getElementById('mynodeinfo');
+                infoContainer.innerHTML = '<h2>' + nodeData.label + '</h2>' +
+                    '<p><strong>Description:</strong> ' + nodeData.description + '</p>' +
+                    '<p><strong>Status:</strong> <a href="' + nodeData.status_url + '"><u>' + nodeData.status + '</u></a></p>' +
+                    '<p><strong>Homepage:</strong> <a href="' + nodeData.homepage + '"><u>' + nodeData.homepage + '</u></a></p>';
+                console.log("Clicked node data:", nodeData);
+                if (nodeData.iscontainer) {
+                    let updates = [];
+                    nodes.update({ id: nodeId, containerOpened: !nodes.get(nodeId).containerOpened });
+                    for(let i =0;i<edges.get().length;i++){
+                        let edge = edges.get()[i];
+                        let from = Math.min(edge.from,edge.to);
+                        let to = Math.max(edge.from,edge.to);
+                        let position = network.getPosition(to);
+                        if(
+                            nodes.get(from).containerOpened===true && 
+                            from!==nodeId &&
+                            (nodes.get(nodeId).level>=nodes.get(from).level)
+                        ){
+                            nodes.update({id:from,containerOpened:false});
+
+                        }
+                        if(from===nodeId)position = network.getPosition(from);
+                        updates.push({ id: to, hidden: !nodes.get(from).containerOpened, x: position.x, y: position.y });
+
+                    }
+                    // let isTopOfCent = nodeId % 100 === 0;
+                    // let isSecondLevel = nodeId % 10 === 0;
+                    // if (!isTopOfCent && !isSecondLevel) {
+                    //     return;
+                    // }
+                    // for (let i = 0; i < nodesDatasFull.length; i++) {
+                    //     let potentialChild = nodesDatasFull[i];
+                    //     let sameCent = (Math.trunc(potentialChild.id / 100) === Math.trunc(nodeId / 100));
+                    //     if (potentialChild.id === nodeId) continue;
+                    //     if (!sameCent) continue;
+                    //     if (!isTopOfCent) {
+                    //         let sameDecade = Math.trunc(potentialChild.id / 10) === Math.trunc(nodeId / 10);
+                    //         if (!sameDecade) continue;
+                    //     }
+                    //     updates.push({ id: potentialChild.id, hidden: nodes.get(nodeId).containerOpened, x: parentPosition.x, y: parentPosition.y });
+                    // }
+                    nodes.update(updates);
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
