@@ -147,11 +147,13 @@
 
                 // update title content
                 if (n.title && n.fullDatas) {
-                  n.title.innerHTML =
+                  let a = document.createElement("div");
+																							a.innerHTML =
                     'Server: <b>' + n.label + '</b><br>' +
                     'Description: <i>' + n.fullDatas.description + '</i><br>' +
                     'Status: <a href=' + n.fullDatas.status_url + '><u>' + newStatus + '</u></a><br>' +
                     'Homepage: <a href=' + n.fullDatas.homepage + '><u>' + n.fullDatas.homepage + '</u></a>';
+n.title=a;
                 }
 
                 // color by status: 'up' -> lightgreen, 'down' -> lightcoral, default -> lightgray
