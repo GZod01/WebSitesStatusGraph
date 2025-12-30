@@ -118,6 +118,8 @@
         // initialize your network!
         var network = new vis.Network(container, data, options);
 
+        const REFRESH_INTERVAL_MS = 120000; // 2 minutes
+
         function refreshStatuses() {
           fetch(uptime_summary_url)
             .then(r => r.json())
@@ -163,7 +165,7 @@
         }
 
         refreshStatuses();
-        setInterval(refreshStatuses, 120000);
+        setInterval(refreshStatuses, REFRESH_INTERVAL_MS);
 
         network.on("click", function (params) {
             if (params.nodes.length > 0) {
