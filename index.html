@@ -70,6 +70,9 @@
             nodeDataCopy.shape = nodeData.iscontainer ? 'box' : 'ellipse';
             nodeDataCopy.color = nodeData.status === 'on' ? 'lightgreen' : 'lightcoral';
             nodeDataCopy.fullDatas = nodeData;
+            nodeDataCopy.status_id = (typeof nodeData.status_url === 'string')
+                ? nodeData.status_url.split('/').filter(Boolean).pop() || null
+                : null;
             if (nodeData.iscontainer) nodeDataCopy.containerOpened = nodeData.containerOpened ?? false;
             if (nodeData.id != nodesDatasFull[0].id) {
                 nodeDataCopy.hidden = true;
