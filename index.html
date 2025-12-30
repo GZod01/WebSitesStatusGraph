@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self'; script-src 'self' 'unsafe-inline'; script-src-elem 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';">
+        content="default-src 'self'; script-src 'self' 'unsafe-inline'; script-src-elem 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://raw.githubusercontent.com;">
     <title>WOW</title>
     <script type="text/javascript" src="./vis-network.min.js"></script>
     <style type="text/css">
@@ -117,6 +117,56 @@
 
         // initialize your network!
         var network = new vis.Network(container, data, options);
+
+        const REFRESH_INTERVAL_MS = 120000; // 2 minutes
+
+        function refreshStatuses() {
+          fetch(uptime_summary_url)
+            .then(r => r.json())
+            .then(summary => {
+              const bySlug = {};
+              for (const s of summary) {
+                if (s && s.slug) bySlug[s.slug] = s.status; // 'up' | 'down'
+              }
+
+              const updates = [];
+              nodes.get().forEach(n => {
+                // determine slug (prefer status_id, fallback from status_url)
+                const slug = n.status_id ?? (
+                  n.fullDatas && typeof n.fullDatas.status_url === 'string'
+                    ? n.fullDatas.status_url.split('/').filter(Boolean).pop()
+                    : null
+                );
+                if (!slug) return;
+
+                // use fetched status if available, otherwise keep current status or default to 'unknown'
+                const newStatus = bySlug[slug] || (n.fullDatas && n.fullDatas.status) || 'unknown';
+
+                // update full data status
+                if (n.fullDatas) n.fullDatas.status = newStatus;
+
+                // update title content
+                if (n.title && n.fullDatas) {
+                  n.title.innerHTML =
+                    'Server: <b>' + n.label + '</b><br>' +
+                    'Description: <i>' + n.fullDatas.description + '</i><br>' +
+                    'Status: <a href=' + n.fullDatas.status_url + '><u>' + newStatus + '</u></a><br>' +
+                    'Homepage: <a href=' + n.fullDatas.homepage + '><u>' + n.fullDatas.homepage + '</u></a>';
+                }
+
+                // color by status: 'up' -> lightgreen, 'down' -> lightcoral, default -> lightgray
+                const newColor = newStatus === 'up' ? 'lightgreen' : (newStatus === 'down' ? 'lightcoral' : 'lightgray');
+                updates.push({ id: n.id, color: newColor, title: n.title });
+              });
+
+              if (updates.length) nodes.update(updates);
+            })
+            .catch(err => console.error('Failed to refresh statuses:', err));
+        }
+
+        refreshStatuses();
+        setInterval(refreshStatuses, REFRESH_INTERVAL_MS);
+
         network.on("click", function (params) {
             if (params.nodes.length > 0) {
                 var nodeId = params.nodes[0];
