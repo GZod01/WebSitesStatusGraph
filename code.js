@@ -1,0 +1,190 @@
+const uptime_summary_url = "https://raw.githubusercontent.com/GZod01/gzod01-server-uptime/master/history/summary.json";
+
+var nodesDatasFull = [
+
+    { id: 100, label: 'Sezille.net Main Server', containerOpened: false, iscontainer: true, description: "This is the main server hosting all primary services.", status: "on", status_url: "https://uptime.gh.gzod01.fr/history/sezille-net", homepage: "https://sezille.net" },
+    { id: 120, label: 'CyberGammaGroup Websites VM', containerOpened: false, iscontainer: true, description: "The main VM for standards CyberGammaGroup websites.", status: "on", status_url: "https://uptime.gh.gzod01.fr/history/cybergammagroup-websites-vm", homepage: "https://websites.vm.cybergamma.group" },
+    { id: 121, label: 'CyberGammaGroup', description: "The official website of CyberGammaGroup.", status: "on", status_url: "https://uptime.gh.gzod01.fr/history/cybergamma-group", homepage: "https://cybergamma.group" },
+    { id: 123, label: 'CyberGammApps', description: "The main site of CyberGammaGroup web applications", status: "on", status_url: "https://uptime.gh.gzod01.fr/history/cybergammapps", homepage: "https://apps.cybergamma.group" },
+    { id: 130, label: 'CyberGammaForge VM', containerOpened: false, iscontainer: true, description: "The VM hosting the CyberGammaForge service.", status: "on", status_url: "https://uptime.gh.gzod01.fr/history/cybergammaforge-vm", homepage: "https://forge.vm.cybergamma.group" },
+    { id: 131, label: 'CyberGammaForge', description: "The official CyberGammaForge service for hosting open source projects.", status: "on", status_url: "https://uptime.gh.gzod01.fr/history/cybergammaforge", homepage: "https://forge.cybergamma.group" },
+    { id: 140, label: 'CyberGammaGroup Communications VM', containerOpened: false, iscontainer: true, description: "The VM dedicated to CyberGammaGroup communication services.", status: "on", status_url: "https://uptime.gh.gzod01.fr/history/cybergammagroup-communications-vm", homepage: "https://comm.vm.cybergamma.group" },
+    { id: 141, label: 'CyberGammaMail', description: "The official email service for CyberGammaGroup.", status: "on", status_url: "https://uptime.gh.gzod01.fr/history/cybergammamail", homepage: "https://mail.cybergamma.group" },
+    { id: 142, label: 'CyberGammaChat', description: "The official chat service for CyberGammaGroup.", status: "on", status_url: "https://uptime.gh.gzod01.fr/history/cybergammachat", homepage: "https://ess.cybergamma.group" },
+    { id: 150, label: 'CyberGammaGroup Services VM', containerOpened: false, iscontainer: true, description: "The VM for various CyberGammaGroup services.", status: "on", status_url: "https://uptime.gh.gzod01.fr/history/cybergammagroup-services-vm", homepage: "https://services.vm.cybergamma.group" },
+    { id: 151, label: 'CyberGammaCloud', description: "The CyberGammaGroup nextcloud instance.", status: "on", status_url: "https://uptime.gh.gzod01.fr/history/cybergammacloud", homepage: "https://nc.cybergamma.group" },
+    { id: 160, label: 'Home Assistant Sezille.net VM', iscontainer: true, description: "The VM dedicated to home automation services for Sezille.net.", status: "on", status_url: "https://uptime.gh.gzod01.fr/history/home-assistant-sezille-net-vm", homepage: "https://haos.sezille.net" },
+    { id: 161, label: 'Home Assistant Sezille.net', description: "The home automation platform for Sezille.net.", status: "on", status_url: "https://uptime.gh.gzod01.fr/history/home-assistant-sezille-net", homepage: "https://haos.sezille.net" }
+];
+
+nodesDatas = [];
+let maxI = 0;
+nodesDatasFull.forEach(function (nodeData) {
+    let nodeDataCopy = {};
+    nodeDataCopy.id = nodeData.id;
+    nodeDataCopy.label = nodeData.label;
+    let a = document.createElement('div');
+    nodeDataCopy.title = a;
+    a.innerHTML = 'Server: <b>' + nodeData.label + '</b><br>Description: <i>' + nodeData.description + '</i><br>Status: <a href=' + nodeData.status_url + '><u>' + nodeData.status + '</u></a><br>Homepage: <a href=' + nodeData.homepage + '><u>' + nodeData.homepage + '</u></a>';
+    nodeDataCopy.shape = nodeData.iscontainer ? 'box' : 'ellipse';
+    nodeDataCopy.color = nodeData.status === 'on' ? 'lightgreen' : 'lightcoral';
+    nodeDataCopy.fullDatas = nodeData;
+    nodeDataCopy.status_id = (typeof nodeData.status_url === 'string')
+        ? nodeData.status_url.split('/').filter(Boolean).pop() || null
+        : null;
+    if (nodeData.iscontainer) nodeDataCopy.containerOpened = nodeData.containerOpened ?? false;
+    if (nodeData.id != nodesDatasFull[0].id) {
+        nodeDataCopy.hidden = true;
+    }
+    let i = 0;
+    while (true) {
+        i++;
+        if ((nodeData.id % Math.pow(10, i)) != 0) break;
+    }
+    maxI = Math.max(maxI, i);
+    nodeDataCopy.level = i;
+    nodesDatas.push(nodeDataCopy);
+});
+var nodes = new vis.DataSet(nodesDatas);
+
+var edges = new vis.DataSet([
+    { from: 100, to: 120 },
+    { from: 100, to: 130 },
+    { from: 100, to: 140 },
+    { from: 100, to: 150 },
+    { from: 100, to: 160 },
+    { from: 120, to: 121 },
+    { from: 120, to: 123 },
+    { from: 130, to: 131 },
+    { from: 140, to: 141 },
+    { from: 140, to: 142 },
+    { from: 150, to: 151 },
+    { from: 160, to: 161 }
+]);
+
+var container = document.getElementById('mynetwork');
+
+var data = {
+    nodes: nodes,
+    edges: edges
+};
+var options = {
+};
+
+var network = new vis.Network(container, data, options);
+
+const REFRESH_INTERVAL_MS = 120000;
+let lastFetchTime = null;
+
+function refreshStatuses() {
+    fetch(uptime_summary_url)
+        .then(r => r.json())
+        .then(summary => {
+            lastFetchTime = new Date();
+            const bySlug = {};
+            for (const s of summary) {
+                if (s && s.slug) bySlug[s.slug] = s;
+            }
+
+            const updates = [];
+            nodes.get().forEach(n => {
+
+                const slug = n.status_id ?? (
+                    n.fullDatas && typeof n.fullDatas.status_url === 'string'
+                        ? n.fullDatas.status_url.split('/').filter(Boolean).pop()
+                        : null
+                );
+                if (!slug) return;
+
+                const uptimeData = bySlug[slug];
+                const newStatus = uptimeData ? uptimeData.status : (n.fullDatas && n.fullDatas.status) || 'unknown';
+
+                if (n.fullDatas) {
+                    n.fullDatas.status = newStatus;
+                    n.fullDatas.uptimeData = uptimeData || null;
+                }
+
+                if (n.title && n.fullDatas) {
+                    let a = document.createElement("div");
+                    a.innerHTML =
+                        'Server: <b>' + n.label + '</b><br>' +
+                        'Description: <i>' + n.fullDatas.description + '</i><br>' +
+                        'Status: <a href=' + n.fullDatas.status_url + '><u>' + newStatus + '</u></a><br>' +
+                        'Homepage: <a href=' + n.fullDatas.homepage + '><u>' + n.fullDatas.homepage + '</u></a>';
+                    n.title = a;
+                }
+
+                const newColor = newStatus === 'up' ? 'lightgreen' : (newStatus === 'down' ? 'lightcoral' : 'lightgray');
+                updates.push({ id: n.id, color: newColor, title: n.title });
+            });
+
+            if (updates.length) nodes.update(updates);
+        })
+        .catch(err => console.error('Failed to refresh statuses:', err));
+}
+
+refreshStatuses();
+setInterval(refreshStatuses, REFRESH_INTERVAL_MS);
+
+network.on("click", function (params) {
+    if (params.nodes.length > 0) {
+        var nodeId = params.nodes[0];
+        var node = nodes.get(nodeId);
+        var nodeData = node.fullDatas;
+        var infoContainer = document.getElementById('mynodeinfo');
+
+        var html = '<h2>' + nodeData.label + '</h2>' +
+            '<p><strong>Description:</strong> ' + nodeData.description + '</p>' +
+            '<p><strong>Status:</strong> <a href="' + nodeData.status_url + '"><u>' + nodeData.status + '</u></a></p>' +
+            '<p><strong>Homepage:</strong> <a href="' + nodeData.homepage + '"><u>' + nodeData.homepage + '</u></a></p>';
+
+            html += '<hr style="margin: 15px 0;">';
+        html += '<h3 style="margin-bottom: 10px; font-size: 1.1em;">Debug Information</h3>';
+        html += '<div style="font-family: monospace; font-size: 0.9em; background: #f5f5f5; padding: 10px; border-radius: 5px;">';
+        html += '<p style="margin: 5px 0;"><strong>Node ID:</strong> ' + nodeData.id + '</p>';
+        html += '<p style="margin: 5px 0;"><strong>Status ID:</strong> ' + (node.status_id || 'N/A') + '</p>';
+        html += '<p style="margin: 5px 0;"><strong>Current Color:</strong> ' + (node.color || 'N/A') + '</p>';
+
+        if (nodeData.uptimeData) {
+            var uptimeData = nodeData.uptimeData;
+            html += '<p style="margin: 5px 0;"><strong>Uptime (All time):</strong> ' + (uptimeData.uptime || 'N/A') + '</p>';
+            html += '<p style="margin: 5px 0;"><strong>Uptime (Day):</strong> ' + (uptimeData.uptimeDay || 'N/A') + '</p>';
+            html += '<p style="margin: 5px 0;"><strong>Uptime (Week):</strong> ' + (uptimeData.uptimeWeek || 'N/A') + '</p>';
+            html += '<p style="margin: 5px 0;"><strong>Uptime (Month):</strong> ' + (uptimeData.uptimeMonth || 'N/A') + '</p>';
+            html += '<p style="margin: 5px 0;"><strong>Response Time:</strong> ' + (uptimeData.time ? uptimeData.time + ' ms' : 'N/A') + '</p>';
+        } else {
+            html += '<p style="margin: 5px 0; color: #999;">Uptime data not yet loaded</p>';
+        }
+
+        if (lastFetchTime) {
+            html += '<p style="margin: 5px 0;"><strong>Last Updated:</strong> ' + lastFetchTime.toLocaleTimeString() + '</p>';
+        }
+
+        html += '</div>';
+
+        infoContainer.innerHTML = html;
+        console.log("Clicked node data:", nodeData);
+        if (nodeData.iscontainer) {
+            let updates = [];
+            nodes.update({ id: nodeId, containerOpened: !nodes.get(nodeId).containerOpened });
+            for (let i = 0; i < edges.get().length; i++) {
+                let edge = edges.get()[i];
+                let from = Math.min(edge.from, edge.to);
+                let to = Math.max(edge.from, edge.to);
+                let position = network.getPosition(to);
+                if (
+                    nodes.get(from).containerOpened === true &&
+                    from !== nodeId &&
+                    (nodes.get(nodeId).level >= nodes.get(from).level)
+                ) {
+                    nodes.update({ id: from, containerOpened: false });
+
+                }
+                if (from === nodeId) position = network.getPosition(from);
+                updates.push({ id: to, hidden: !nodes.get(from).containerOpened, x: position.x, y: position.y });
+
+            }
+            nodes.update(updates);
+        }
+    }
+});
