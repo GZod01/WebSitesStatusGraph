@@ -10,11 +10,12 @@ var nodesDatasFull = [
     { id: 131, label: 'CyberGammaForge', description: "The official CyberGammaForge service for hosting open source projects.", status: "on", status_url: "https://uptime.gh.gzod01.fr/history/cybergammaforge", homepage: "https://forge.cybergamma.group" },
     { id: 140, label: 'CyberGammaGroup Communications VM', containerOpened: false, iscontainer: true, description: "The VM dedicated to CyberGammaGroup communication services.", status: "on", status_url: "https://uptime.gh.gzod01.fr/history/cybergammagroup-communications-vm", homepage: "https://comm.vm.cybergamma.group" },
     { id: 141, label: 'CyberGammaMail', description: "The official email service for CyberGammaGroup.", status: "on", status_url: "https://uptime.gh.gzod01.fr/history/cybergammamail", homepage: "https://mail.cybergamma.group" },
-    { id: 142, label: 'CyberGammaChat', description: "The official chat service for CyberGammaGroup.", status: "on", status_url: "https://uptime.gh.gzod01.fr/history/cybergammachat", homepage: "https://ess.cybergamma.group" },
     { id: 150, label: 'CyberGammaGroup Services VM', containerOpened: false, iscontainer: true, description: "The VM for various CyberGammaGroup services.", status: "on", status_url: "https://uptime.gh.gzod01.fr/history/cybergammagroup-services-vm", homepage: "https://services.vm.cybergamma.group" },
     { id: 151, label: 'CyberGammaCloud', description: "The CyberGammaGroup nextcloud instance.", status: "on", status_url: "https://uptime.gh.gzod01.fr/history/cybergammacloud", homepage: "https://nc.cybergamma.group" },
     { id: 160, label: 'Home Assistant Sezille.net VM', iscontainer: true, description: "The VM dedicated to home automation services for Sezille.net.", status: "on", status_url: "https://uptime.gh.gzod01.fr/history/home-assistant-sezille-net-vm", homepage: "https://haos.sezille.net" },
-    { id: 161, label: 'Home Assistant Sezille.net', description: "The home automation platform for Sezille.net.", status: "on", status_url: "https://uptime.gh.gzod01.fr/history/home-assistant-sezille-net", homepage: "https://haos.sezille.net" }
+    { id: 161, label: 'Home Assistant Sezille.net', description: "The home automation platform for Sezille.net.", status: "on", status_url: "https://uptime.gh.gzod01.fr/history/home-assistant-sezille-net", homepage: "https://haos.sezille.net" },
+    { id: 170, label: 'CyberGammaGroup Matrix VM', containerOpened: false, iscontainer: true, description: "The VM dedicated to CyberGammaGroup matrix services.", status: "on", status_url: "https://uptime.gh.gzod01.fr/history/cybergammagroup-matrix-vm", homepage: "https://matrix.vm.cybergamma.group" },
+    { id: 171, label: 'CyberGammaChat', description: "The official chat service for CyberGammaGroup.", status: "on", status_url: "https://uptime.gh.gzod01.fr/history/cybergammachat", homepage: "https://ess.cybergamma.group" }
 ];
 
 nodesDatas = [];
@@ -57,9 +58,9 @@ var edges = new vis.DataSet([
     { from: 120, to: 123 },
     { from: 130, to: 131 },
     { from: 140, to: 141 },
-    { from: 140, to: 142 },
     { from: 150, to: 151 },
-    { from: 160, to: 161 }
+    { from: 160, to: 161 },
+    { from: 170, to: 171},
 ]);
 
 var container = document.getElementById('mynetwork');
