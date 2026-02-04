@@ -2,7 +2,7 @@ const uptime_summary_url = "https://raw.githubusercontent.com/GZod01/gzod01-serv
 
 var nodesDatasFull = [
 
-    { id: 100, label: 'Sezille.net Main Server', containerOpened: false, iscontainer: true, description: "This is the main server hosting all primary services.", status: "on", status_url: "https://uptime.gh.gzod01.fr/history/sezille-net", homepage: "https://sezille.net" },
+    { id: 100, label: 'Sezille.net Main Server', containerOpened: false, iscontainer: true, description: "This is the main server hosting all primary services.", status: "on", status_url: "https://uptime.gh.gzod01.fr/history/sezille-net-main-server", homepage: "https://sezille.net" },
     { id: 120, label: 'CyberGammaGroup Websites VM', containerOpened: false, iscontainer: true, description: "The main VM for standards CyberGammaGroup websites.", status: "on", status_url: "https://uptime.gh.gzod01.fr/history/cyber-gamma-group-websites-vm", homepage: "https://websites.vm.cybergamma.group" },
     { id: 121, label: 'CyberGammaGroup', description: "The official website of CyberGammaGroup.", status: "on", status_url: "https://uptime.gh.gzod01.fr/history/cyber-gamma-group", homepage: "https://cybergamma.group" },
     { id: 123, label: 'CyberGammApps', description: "The main site of CyberGammaGroup web applications", status: "on", status_url: "https://uptime.gh.gzod01.fr/history/cyber-gamm-apps", homepage: "https://apps.cybergamma.group" },
