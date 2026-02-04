@@ -54,6 +54,7 @@ var edges = new vis.DataSet([
     { from: 100, to: 140 },
     { from: 100, to: 150 },
     { from: 100, to: 160 },
+    { from: 100, to: 170 },
     { from: 120, to: 121 },
     { from: 120, to: 123 },
     { from: 130, to: 131 },
