@@ -245,18 +245,25 @@ network.on("click", function (params) {
 const themeSelect = document.querySelector('#themeSelector');
 function setTheme(){
     let newOptions = options;
-    newOptions.groups.up.font.color = getComputedStyle(document.documentElement).getPropertyValue('--node-text-color').trim();
-    newOptions.groups.up.color.background = getComputedStyle(document.documentElement).getPropertyValue('--node-color-online').trim();
-    newOptions.groups.up.color.shadow.color = getComputedStyle(document.documentElement).getPropertyValue('--node-glow-effect').trim();
-    newOptions.groups.down.font.color = getComputedStyle(document.documentElement).getPropertyValue('--node-text-color').trim();
-    newOptions.groups.down.color.background = getComputedStyle(document.documentElement).getPropertyValue('--node-color-offline').trim();
-    newOptions.groups.down.color.shadow.color = getComputedStyle(document.documentElement).getPropertyValue('--node-glow-effect').trim();
-    newOptions.groups.unknown.font.color = getComputedStyle(document.documentElement).getPropertyValue('--node-text-color').trim();
-    newOptions.groups.unknown.color.background = getComputedStyle(document.documentElement).getPropertyValue('--node-color-unknown').trim();
-    newOptions.groups.unknown.color.shadow.color = getComputedStyle(document.documentElement).getPropertyValue('--node-glow-effect').trim();
+    newOptions.groups.up.font.color = getComputedStyle(document.body).getPropertyValue('--node-text-color').trim();
+    newOptions.groups.up.color.background = getComputedStyle(document.body).getPropertyValue('--node-color-online').trim();
+    console.log(getComputedStyle(document.body).getPropertyValue('--node-color-online').trim());
+    newOptions.groups.up.color.shadow.color = getComputedStyle(document.body).getPropertyValue('--node-glow-effect').trim();
+    newOptions.groups.down.font.color = getComputedStyle(document.body).getPropertyValue('--node-text-color').trim();
+    newOptions.groups.down.color.background = getComputedStyle(document.body).getPropertyValue('--node-color-offline').trim();
+    newOptions.groups.down.color.shadow.color = getComputedStyle(document.body).getPropertyValue('--node-glow-effect').trim();
+    newOptions.groups.unknown.font.color = getComputedStyle(document.body).getPropertyValue('--node-text-color').trim();
+    newOptions.groups.unknown.color.background = getComputedStyle(document.body).getPropertyValue('--node-color-unknown').trim();
+    newOptions.groups.unknown.color.shadow.color = getComputedStyle(document.body).getPropertyValue('--node-glow-effect').trim();
     console.log(newOptions);
     network.moveTo(newOptions);
     network.redraw();
+    nodes.update(nodes.get().map(n => {
+        const newNode = { id: n.id };
+        if (n.group) newNode.group = n.group;
+        if (n.title) newNode.title = n.title;
+        return newNode;
+    }));
 }
 function updateTheme(selectedTheme) {
     if (selectedTheme === 's') {
@@ -266,12 +273,18 @@ function updateTheme(selectedTheme) {
     }
 }
 
-themeSelect.addEventListener('change', (event) => {
+function themeEventChange(event) {
     const selectedTheme = event.target.value;
-
+    
 
     document.startViewTransition(() => {
         updateTheme(selectedTheme);
     });
-    setTheme();
+    setTimeout(() => {
+        setTheme();
+    },300);
+}
+document.querySelectorAll('input.theme-button').forEach(button => {
+    button.addEventListener('click', themeEventChange);
 });
+themeSelect.addEventListener('change', themeEventChange);

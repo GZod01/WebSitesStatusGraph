@@ -12,11 +12,16 @@
 </head>
 
 <body>
-    <select id="themeSelector">
+    <!-- <select id="themeSelector">
         <option value="s">System</option>
         <option value="l">Light</option>
         <option value="d">Dark</option>
-    </select>
+    </select> -->
+    <div class="themeSelector">
+        <label for="theme_s"><input hidden type="radio" id="theme_s" name="theme" selected checked class="theme-button" value="s">💻</label>
+        <label for="theme_l"><input hidden type="radio" id="theme_l" name="theme" class="theme-button" value="l">☀️</input></label>
+        <label for="theme_d"><input hidden type="radio" id="theme_d" name="theme" class="theme-button" value="d">🌙</input></label>
+    </div>
     <div id="mynetwork"></div>
     <div id="mynodeinfo"></div>
     <script type="text/javascript" src="./code.js"></script>

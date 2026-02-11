@@ -1,10 +1,10 @@
 ::view-transition-old(root) {
-    animation-delay: 500ms;
+    animation-delay: 250ms;
 }
 
 ::view-transition-new(root) {
-    animation: circle-in 500ms;
-    /*   animation-timing-function: linear(0, 0.234 11.8%, 0.403 18.4%, 0.624 24.7%, 0.999 33.3%, 0.76 39.9%, 0.705 42.6%, 0.687 45.2%, 0.703 47.7%, 0.753 50.3%, 0.999 57.7%, 0.89 61.8%, 0.865 63.6%, 0.857 65.3%, 0.865 67%, 0.887 68.8%, 0.999 74.5%, 0.957 77.5%, 0.944 80.2%, 0.954 82.7%, 1 88.2%, 0.988 91.9%, 1); */
+    animation: circle-in 250ms;
+    /* animation-timing-function: linear(0, 0.234 11.8%, 0.403 18.4%, 0.624 24.7%, 0.999 33.3%, 0.76 39.9%, 0.705 42.6%, 0.687 45.2%, 0.703 47.7%, 0.753 50.3%, 0.999 57.7%, 0.89 61.8%, 0.865 63.6%, 0.857 65.3%, 0.865 67%, 0.887 68.8%, 0.999 74.5%, 0.957 77.5%, 0.944 80.2%, 0.954 82.7%, 1 88.2%, 0.988 91.9%, 1); */
 }
 
 @keyframes move-in {
@@ -47,6 +47,7 @@ body {
     --clr-heading: hsl(18, 65%, 48%);
     --node-color-online: hsl(120, 70%, 40%);
     --node-color-offline: hsl(0, 70%, 40%);
+    /* --node-color-offline: pink; */
     --node-color-unknown: hsl(60, 70%, 40%);
     --node-text-color: #ffffff;
     --node-glow-effect: drop-shadow(0 0 6px hsl(18, 65%, 48%));
@@ -74,9 +75,48 @@ body {
     background: var(--clr-body-bg);
     color: var(--clr-text);
 }
-#themeSelector{
+.themeSelector{
     position: fixed;
+    left:50%;
+    top:10px;
+    transform: translateX(-50%);
     z-index: 99;
+    width:fit-content;
+    /* padding:20px; */
+    label{
+        display:inline-block;
+        padding: 20px;
+        cursor: pointer;
+    }
+    ::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 14%;
+        width: 33%;
+        height: 100%;
+        z-index: -1;
+        background: var(--clr-card-bg);
+        border: 1px solid var(--clr-heading);
+        border-radius: 100%;
+        transform: translateX(-50%);
+        transition: left 300ms;
+    }
+    &:has(#theme_s:checked) {
+        ::before {
+            left:15%;
+        }
+    }
+    &:has(#theme_l:checked) {
+        ::before {
+            left: 50%;
+        }
+    }
+    &:has(#theme_d:checked) {
+        ::before {
+            left: 85%;
+        }
+    }
 }
 #mynetwork {
     height: calc(100vh - 2px);
