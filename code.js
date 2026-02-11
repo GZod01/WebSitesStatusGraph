@@ -28,7 +28,7 @@ nodesDatasFull.forEach(function (nodeData) {
     nodeDataCopy.title = a;
     a.innerHTML = 'Server: <b>' + nodeData.label + '</b><br>Description: <i>' + nodeData.description + '</i><br>Status: <a href=' + nodeData.status_url + '><u>' + nodeData.status + '</u></a><br>Homepage: <a href=' + nodeData.homepage + '><u>' + nodeData.homepage + '</u></a>';
     nodeDataCopy.shape = nodeData.iscontainer ? 'box' : 'ellipse';
-    nodeDataCopy.color = nodeData.status === 'on' ? 'lightgreen' : 'lightcoral';
+    // nodeDataCopy.color = nodeData.status === 'on' ? 'lightgreen' : 'lightcoral';
     nodeDataCopy.fullDatas = nodeData;
     nodeDataCopy.status_id = (typeof nodeData.status_url === 'string')
         ? nodeData.status_url.split('/').filter(Boolean).pop() || null
@@ -71,6 +71,10 @@ var data = {
     edges: edges
 };
 var options = {
+    interaction: {
+        hover: true,
+        tooltipDelay: 200,
+    },
     nodes:{
         shadow: {
             enabled: true,
@@ -179,6 +183,7 @@ function refreshStatuses() {
 
 refreshStatuses();
 setInterval(refreshStatuses, REFRESH_INTERVAL_MS);
+setTheme();
 
 network.on("click", function (params) {
     if (params.nodes.length > 0) {
@@ -217,7 +222,7 @@ network.on("click", function (params) {
         html += '</div>';
 
         infoContainer.innerHTML = html;
-        console.log("Clicked node data:", nodeData);
+        // console.log("Clicked node data:", nodeData);
         if (nodeData.iscontainer) {
             let updates = [];
             nodes.update({ id: nodeId, containerOpened: !nodes.get(nodeId).containerOpened });
@@ -239,15 +244,41 @@ network.on("click", function (params) {
 
             }
             nodes.update(updates);
+            setMouseHover();
         }
     }
+});
+window.mouseOverNode=false;
+window.currentHoveredNodeId=null;
+window.currentHoveredCursorType="zoom-in";
+function setMouseHover(){
+    let curnode = nodes.get(window.currentHoveredNodeId);
+    window.currentHoveredCursorType=curnode.fullDatas.iscontainer ? (curnode.containerOpened ? "zoom-out" : "zoom-in") : "help";
+    // console.log(curnode)
+    network.canvas.body.container.style.cursor = window.currentHoveredCursorType;
+}
+network.on("hoverNode", function (params) {
+    window.currentHoveredNodeId = params.node;
+    // nodes.update({ id: params.node, color: "green" });
+    window.mouseOverNode=true;
+    setMouseHover();
+});
+network.on("blurNode", function (params) {
+    network.canvas.body.container.style.cursor = 'default';
+    window.mouseOverNode=false;
+});
+network.on("dragStart", function (params) {
+    network.canvas.body.container.style.cursor = 'grabbing';
+});
+network.on("dragEnd", function (params) {
+    network.canvas.body.container.style.cursor = window.mouseOverNode ? window.currentHoveredCursorType : 'default';
 });
 const themeSelect = document.querySelector('#themeSelector');
 function setTheme(){
     let newOptions = options;
     newOptions.groups.up.font.color = getComputedStyle(document.body).getPropertyValue('--node-text-color').trim();
     newOptions.groups.up.color.background = getComputedStyle(document.body).getPropertyValue('--node-color-online').trim();
-    console.log(getComputedStyle(document.body).getPropertyValue('--node-color-online').trim());
+    // console.log(getComputedStyle(document.body).getPropertyValue('--node-color-online').trim());
     newOptions.groups.up.color.shadow.color = getComputedStyle(document.body).getPropertyValue('--node-glow-effect').trim();
     newOptions.groups.down.font.color = getComputedStyle(document.body).getPropertyValue('--node-text-color').trim();
     newOptions.groups.down.color.background = getComputedStyle(document.body).getPropertyValue('--node-color-offline').trim();
@@ -255,7 +286,7 @@ function setTheme(){
     newOptions.groups.unknown.font.color = getComputedStyle(document.body).getPropertyValue('--node-text-color').trim();
     newOptions.groups.unknown.color.background = getComputedStyle(document.body).getPropertyValue('--node-color-unknown').trim();
     newOptions.groups.unknown.color.shadow.color = getComputedStyle(document.body).getPropertyValue('--node-glow-effect').trim();
-    console.log(newOptions);
+    // console.log(newOptions);
     network.moveTo(newOptions);
     network.redraw();
     nodes.update(nodes.get().map(n => {
