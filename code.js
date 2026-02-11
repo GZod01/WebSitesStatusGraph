@@ -69,6 +69,58 @@ var data = {
     edges: edges
 };
 var options = {
+    nodes:{
+        shadow: {
+            enabled: true,
+            size:10,
+            x:5,
+            y:5
+        }
+    },
+    groups:{
+        up: {
+            color: {
+                background: 'lightgreen',
+                border: 'green',
+                highlight: {
+                    background: 'green',
+                    border: 'darkgreen'
+                },
+                shadow: {
+                    color: 'green',
+                }
+            },
+            font: { color: 'black' }
+        },
+        down: {
+            color: {
+                background: 'lightcoral',
+                border: 'red',
+                highlight: {
+                    background: 'red',
+                    border: 'darkred'
+                },
+                shadow: {
+                    color: 'red',
+                }
+            },
+            font: { color: 'black' }
+        },
+        unknown: {
+            color: {
+                background: 'lightgray',
+                border: 'gray',
+                highlight: {
+                    background: 'gray',
+                    border: 'darkgray'
+                },
+                shadow: {
+                    color: 'gray',
+                }
+            },
+            font: { color: 'black' }
+        }
+    }
 };
 
 var network = new vis.Network(container, data, options);
@@ -114,8 +166,8 @@ function refreshStatuses() {
                     n.title = a;
                 }
 
-                const newColor = newStatus === 'up' ? 'lightgreen' : (newStatus === 'down' ? 'lightcoral' : 'lightgray');
-                updates.push({ id: n.id, color: newColor, title: n.title });
+                const newGroup = newStatus === 'up' ? 'up' : (newStatus === 'down' ? 'down' : 'unknown');
+                updates.push({ id: n.id, group: newGroup, title: n.title });
             });
 
             if (updates.length) nodes.update(updates);
@@ -138,7 +190,7 @@ network.on("click", function (params) {
             '<p><strong>Status:</strong> <a href="' + nodeData.status_url + '"><u>' + nodeData.status + '</u></a></p>' +
             '<p><strong>Homepage:</strong> <a href="' + nodeData.homepage + '"><u>' + nodeData.homepage + '</u></a></p>';
 
-            html += '<hr style="margin: 15px 0;">';
+        html += '<hr style="margin: 15px 0;">';
         html += '<h3 style="margin-bottom: 10px; font-size: 1.1em;">Debug Information</h3>';
         html += '<div style="font-family: monospace; font-size: 0.9em; background: #f5f5f5; padding: 10px; border-radius: 5px;">';
         html += '<p style="margin: 5px 0;"><strong>Node ID:</strong> ' + nodeData.id + '</p>';
@@ -187,4 +239,37 @@ network.on("click", function (params) {
             nodes.update(updates);
         }
     }
+});
+const themeSelect = document.querySelector('#themeSelector');
+function setTheme(){
+    let newOptions = options;
+    newOptions.groups.up.font.color = getComputedStyle(document.documentElement).getPropertyValue('--node-text-color').trim();
+    newOptions.groups.up.color.background = getComputedStyle(document.documentElement).getPropertyValue('--node-color-online').trim();
+    newOptions.groups.up.color.shadow.color = getComputedStyle(document.documentElement).getPropertyValue('--node-glow-effect').trim();
+    newOptions.groups.down.font.color = getComputedStyle(document.documentElement).getPropertyValue('--node-text-color').trim();
+    newOptions.groups.down.color.background = getComputedStyle(document.documentElement).getPropertyValue('--node-color-offline').trim();
+    newOptions.groups.down.color.shadow.color = getComputedStyle(document.documentElement).getPropertyValue('--node-glow-effect').trim();
+    newOptions.groups.unknown.font.color = getComputedStyle(document.documentElement).getPropertyValue('--node-text-color').trim();
+    newOptions.groups.unknown.color.background = getComputedStyle(document.documentElement).getPropertyValue('--node-color-unknown').trim();
+    newOptions.groups.unknown.color.shadow.color = getComputedStyle(document.documentElement).getPropertyValue('--node-glow-effect').trim();
+    console.log(newOptions);
+    network.moveTo(newOptions);
+    network.redraw();
+}
+function updateTheme(selectedTheme) {
+    if (selectedTheme === 's') {
+        document.documentElement.style.removeProperty('--theme');
+    } else {
+        document.documentElement.style.setProperty('--theme', selectedTheme);
+    }
+}
+
+themeSelect.addEventListener('change', (event) => {
+    const selectedTheme = event.target.value;
+
+
+    document.startViewTransition(() => {
+        updateTheme(selectedTheme);
+    });
+    setTheme();
 });

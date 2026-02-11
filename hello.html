@@ -1,0 +1,132 @@
+<form class="color-picker"> 
+  <fieldset> 
+     
+    <select name="theme" id="theme">
+      <option value="💻">System</option>
+      <option value="☀️">Light</option>
+      <option value="🌑">Dark</option>
+    </select>
+  </fieldset>
+</form>
+
+<main>
+  <div class="wrapper">
+    <h1>Theme transitions</h1>
+    <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Obcaecati natus error quam suscipit architecto enim nobis vero eaque. Repudiandae quisquam impedit fugiat neque delectus doloremque!</p>
+    <p>Rem neque inventore necessitatibus totam incidunt eius reprehenderit quis ipsam officia praesentium, quod vero soluta maxime iure nobis dolorum a quibusdam officiis ratione debitis? Ipsam.</p>
+    <h2>Something interesting</h2>
+    <div class="auto-grid">
+      <div class="card">
+        <h3 class="card__title">A medium-length title</h3>
+        <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Repellendus, atque.</p>
+      </div>
+      <div class="card">
+        <h3 class="card__title">A short title</h3>
+        <p>Voluptatem excepturi tempore quo recusandae sunt ullam earum optio cum?</p>
+      </div>
+      <div class="card">
+        <h3 class="card__title">A medium-length title</h3>
+        <p>Nam laudantium voluptas, tenetur repellendus numquam rem incidunt deleniti veritatis?</p>
+      </div>
+      <div class="card">
+        <h3 class="card__title">A much longer title than the others</h3>
+        <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Repellendus, atque.</p>
+      </div>
+      <div class="card">
+        <h3 class="card__title">A medium-legth title</h3>
+        <p>Voluptatem excepturi tempore quo recusandae sunt ullam earum optio cum?</p>
+      </div>
+      <div class="card">
+        <h3 class="card__title">A short title</h3>
+        <p>Nam laudantium voluptas, tenetur repellendus numquam rem incidunt deleniti veritatis?</p>
+      </div>
+    </div>
+    <p>Rerum, neque! Consequuntur obcaecati beatae dolorum, fuga itaque iusto dicta et corporis facere ea necessitatibus odit cum, voluptates harum, dolore maiores aliquid distinctio repellendus nesciunt!</p>
+    <p>Unde dolor quod delectus obcaecati labore laboriosam optio sit eligendi. Excepturi explicabo quod obcaecati pariatur error, in, accusantium eum omnis repellat qui, aliquid magnam odit?</p>
+  </div>
+</main>
+<style>
+
+
+::view-transition-old(root) {
+  animation-delay: 500ms;
+}
+
+::view-transition-new(root) {
+  animation: circle-in 500ms;
+/*   animation-timing-function: linear(0, 0.234 11.8%, 0.403 18.4%, 0.624 24.7%, 0.999 33.3%, 0.76 39.9%, 0.705 42.6%, 0.687 45.2%, 0.703 47.7%, 0.753 50.3%, 0.999 57.7%, 0.89 61.8%, 0.865 63.6%, 0.857 65.3%, 0.865 67%, 0.887 68.8%, 0.999 74.5%, 0.957 77.5%, 0.944 80.2%, 0.954 82.7%, 1 88.2%, 0.988 91.9%, 1); */
+}
+
+@keyframes move-in {
+  from { translate: 0 -100%; }
+  to { translate: 0  0; }
+}
+
+@keyframes circle-in {
+  from { clip-path: circle(0% at 50% 0%); }
+  to { clip-path: circle(120% at 50% 0%); }
+}
+
+
+:root {
+  @media (prefers-color-scheme: light) {
+    --theme: ☀️;
+    color-scheme: light;
+  }
+  
+  @media (prefers-color-scheme: dark) {
+    --theme: 🌑;
+    color-scheme: dark;
+  }
+}
+
+body {
+  color-scheme: light;
+  
+  --clr-body-bg: hsl(10, 25%, 95%);
+  --clr-card-bg: hsl(10, 25%, 98%);
+  --clr-text: #232323;
+  --clr-heading: hsl(18, 65%, 48%);
+  
+  @container style(--theme: 🌑) {
+    color-scheme: dark;
+    
+    --clr-body-bg: hsl(173, 10%, 7%);
+    --clr-card-bg: hsl(173, 30%, 10%);
+    --clr-text: #cbd5e1;
+    --clr-heading: hsl(173, 50%, 70%);
+  }
+}
+
+
+body {
+  background: var(--clr-body-bg);
+  color: var(--clr-text);
+}
+
+</style>
+<script>
+    // You should also save the preference
+// so when a user comes back, they don't have
+// to set it again.
+
+const themeSelect = document.querySelector('#theme');
+
+function updateTheme(selectedTheme) {
+  if (selectedTheme === '💻') {
+    document.documentElement.style.removeProperty('--theme');
+  } else {
+    document.documentElement.style.setProperty('--theme', selectedTheme);
+  }
+}
+
+themeSelect.addEventListener('change', (event) => {
+  const selectedTheme = event.target.value;
+
+
+    document.startViewTransition(() => {
+      updateTheme(selectedTheme);
+    });
+  
+});
+</script>

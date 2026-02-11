@@ -1,7 +1,87 @@
+::view-transition-old(root) {
+    animation-delay: 500ms;
+}
+
+::view-transition-new(root) {
+    animation: circle-in 500ms;
+    /*   animation-timing-function: linear(0, 0.234 11.8%, 0.403 18.4%, 0.624 24.7%, 0.999 33.3%, 0.76 39.9%, 0.705 42.6%, 0.687 45.2%, 0.703 47.7%, 0.753 50.3%, 0.999 57.7%, 0.89 61.8%, 0.865 63.6%, 0.857 65.3%, 0.865 67%, 0.887 68.8%, 0.999 74.5%, 0.957 77.5%, 0.944 80.2%, 0.954 82.7%, 1 88.2%, 0.988 91.9%, 1); */
+}
+
+@keyframes move-in {
+    from {
+        translate: 0 -100%;
+    }
+
+    to {
+        translate: 0 0;
+    }
+}
+
+@keyframes circle-in {
+    from {
+        clip-path: circle(0% at 50% 0%);
+    }
+
+    to {
+        clip-path: circle(120% at 50% 0%);
+    }
+}
+
+:root {
+    @media (prefers-color-scheme: light) {
+        --theme: l;
+        color-scheme: light;
+    }
+
+    @media (prefers-color-scheme: dark) {
+        --theme: d;
+        color-scheme: dark;
+    }
+}
+
+body {
+    color-scheme: light;
+    --clr-body-bg: hsl(10, 25%, 95%);
+    --clr-card-bg: hsl(10, 25%, 98%);
+    --clr-text: #232323;
+    --clr-heading: hsl(18, 65%, 48%);
+    --node-color-online: hsl(120, 70%, 40%);
+    --node-color-offline: hsl(0, 70%, 40%);
+    --node-color-unknown: hsl(60, 70%, 40%);
+    --node-text-color: #ffffff;
+    --node-glow-effect: drop-shadow(0 0 6px hsl(18, 65%, 48%));
+
+    @container style(--theme: d) {
+        color-scheme: dark;
+        --clr-body-bg: hsl(173, 10%, 7%);
+        --clr-card-bg: hsl(173, 30%, 10%);
+        --clr-text: #cbd5e1;
+        --clr-heading: hsl(173, 50%, 70%);
+        --node-color-online: hsl(120, 70%, 60%);
+        --node-color-offline: hsl(0, 70%, 60%);
+        --node-color-unknown: hsl(60, 70%, 60%);
+        --node-text-color: #000000;
+        --node-glow-effect: drop-shadow(0 0 6px hsl(173, 50%, 70%));
+    }
+}
+
+
+body {
+    margin: 0;
+    height: 100vh;
+    width: 100vw;
+    padding: 0;
+    background: var(--clr-body-bg);
+    color: var(--clr-text);
+}
+#themeSelector{
+    position: fixed;
+    z-index: 99;
+}
 #mynetwork {
     height: calc(100vh - 2px);
     width: calc(100vw - 2px);
-    border: 1px solid lightgray;
+    border: 1px solid var(--clr-heading);
 }
 
 #mynodeinfo {
@@ -12,13 +92,5 @@
     right: 10px;
     padding: 10px;
     border-radius: 20px;
-    ;
-    border: 1px solid lightgray;
-}
-
-body {
-    margin: 0;
-    height: 100vh;
-    width: 100vw;
-    padding: 0;
+    border: 1px solid var(--clr-heading);
 }
