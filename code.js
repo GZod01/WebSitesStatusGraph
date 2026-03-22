@@ -12,9 +12,9 @@ var nodesDatasFull = [
     { id: 141, label: 'CyberGammaMail', description: "The official email service for CyberGammaGroup.", status: "on", status_url: "https://uptime.gh.gzod01.fr/history/cyber-gamma-mail", homepage: "https://mail.cybergamma.group" },
     { id: 150, label: 'CyberGammaGroup Services VM', containerOpened: false, iscontainer: true, description: "The VM for various CyberGammaGroup services.", status: "on", status_url: "https://uptime.gh.gzod01.fr/history/cyber-gamma-group-services-vm", homepage: "https://services.vm.cybergamma.group" },
     { id: 151, label: 'CyberGammaCloud', description: "The CyberGammaGroup nextcloud instance.", status: "on", status_url: "https://uptime.gh.gzod01.fr/history/cyber-gamma-cloud", homepage: "https://nc.cybergamma.group" },
-    { id: 152, label: 'Firefly III', description: "Private Firefly III instance", status: "on", status_url: "https://uptime.gh.gzod01.fr/history/firefly-iii", homepage: "https://budgetf.cybergamma.group"},
-    { id: 153, label: 'ActualBudget', description: "Private ActualBudget instance", status: "on", status_url: "https://uptime.gh.gzod01.fr/history/actual-budget", homepage: "https://budget.cybergamma.group"},
-    { id: 154, label: 'VaultWarden', description: "Private VaultWarden instance", status: "on", status_url: "https://uptime.gh.gzod01.fr/history/vault-warden", homepage: "https://vw.cybergamma.group"},
+    //{ id: 152, label: 'Firefly III', description: "Private Firefly III instance", status: "on", status_url: "https://uptime.gh.gzod01.fr/history/firefly-iii", homepage: "https://budgetf.cybergamma.group"},
+    //{ id: 153, label: 'ActualBudget', description: "Private ActualBudget instance", status: "on", status_url: "https://uptime.gh.gzod01.fr/history/actual-budget", homepage: "https://budget.cybergamma.group"},
+    //{ id: 154, label: 'VaultWarden', description: "Private VaultWarden instance", status: "on", status_url: "https://uptime.gh.gzod01.fr/history/vault-warden", homepage: "https://vw.cybergamma.group"},
     { id: 160, label: 'Home Assistant Sezille.net VM', iscontainer: true, description: "The VM dedicated to home automation services for Sezille.net.", status: "on", status_url: "https://uptime.gh.gzod01.fr/history/home-assistant-sezille-net-vm", homepage: "https://haos.sezille.net" },
     { id: 161, label: 'Home Assistant Sezille.net', description: "The home automation platform for Sezille.net.", status: "on", status_url: "https://uptime.gh.gzod01.fr/history/home-assistant-sezille-net", homepage: "https://haos.sezille.net" },
     { id: 170, label: 'CyberGammaGroup Matrix VM', containerOpened: false, iscontainer: true, description: "The VM dedicated to CyberGammaGroup matrix services.", status: "on", status_url: "https://uptime.gh.gzod01.fr/history/cyber-gamma-group-matrix-vm", homepage: "https://matrix.vm.cybergamma.group" },
@@ -63,9 +63,9 @@ var edges = new vis.DataSet([
     { from: 130, to: 131 },
     { from: 140, to: 141 },
     { from: 150, to: 151 },
-    { from: 150, to: 152 },
-    { from: 150, to: 153 },
-    { from: 150, to: 154 },
+    //{ from: 150, to: 152 },
+    //{ from: 150, to: 153 },
+    //{ from: 150, to: 154 },
     //{ from: 150, to: 155 },
     { from: 160, to: 161 },
     { from: 170, to: 171},
@@ -280,7 +280,6 @@ network.on("dragStart", function (params) {
 network.on("dragEnd", function (params) {
     network.canvas.body.container.style.cursor = window.mouseOverNode ? window.currentHoveredCursorType : 'default';
 });
-const themeSelect = document.querySelector('#themeSelector');
 function setTheme(){
     let newOptions = options;
     newOptions.groups.up.font.color = getComputedStyle(document.body).getPropertyValue('--node-text-color').trim();
@@ -325,4 +324,3 @@ function themeEventChange(event) {
 document.querySelectorAll('input.theme-button').forEach(button => {
     button.addEventListener('click', themeEventChange);
 });
-themeSelect.addEventListener('change', themeEventChange);
